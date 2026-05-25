@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Independência do Panamá - Prof. Fernando</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0b0b1a;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 80px;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .slide.active { opacity: 1; pointer-events: auto; }
+
+  /* Backgrounds */
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .slide-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.25) saturate(0.7);
+    transform: scale(1.05);
+    transition: transform 8s ease;
+  }
+  .slide.active .slide-bg img { transform: scale(1); }
+  .slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+      rgba(11,11,26,0.92) 0%,
+      rgba(11,11,26,0.7) 40%,
+      rgba(233,69,96,0.08) 100%
+    );
+    z-index: 1;
+  }
+  .slide-overlay-alt {
+    background: linear-gradient(135deg,
+      rgba(11,11,26,0.95) 0%,
+      rgba(11,11,26,0.6) 50%,
+      rgba(15,52,96,0.15) 100%
+    );
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+  }
+
+  .text-side { padding-right: 20px; }
+
+  .label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #e94560;
+    background: rgba(233,69,96,0.12);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 18px;
+    line-height: 1.15;
+  }
+  h2 span { color: #e94560; }
+
+  .desc {
+    font-size: 16px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.75;
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .speech-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-left: 4px solid #e94560;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    backdrop-filter: blur(10px);
+  }
+  .speech-box .speaker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .speech-box .speaker .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e94560, #0f3460);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .speech-box .speaker .name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e94560;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .speech-box p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .image-side {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
+    aspect-ratio: 4/3;
+  }
+  .image-side img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .image-side .img-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px 20px 16px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  .image-side .img-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(233,69,96,0.9);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  .nav {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 14px;
+    z-index: 20;
+    align-items: center;
+    background: rgba(11,11,26,0.8);
+    backdrop-filter: blur(12px);
+    padding: 10px 20px;
+    border-radius: 40px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav button {
+    background: rgba(255,255,255,0.06);
+    border: none;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .nav button:hover { background: #e94560; }
+  .dots { display: flex; gap: 6px; margin: 0 8px; }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer; transition: all 0.3s;
+  }
+  .dot.active { background: #e94560; width: 24px; border-radius: 4px; }
+
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #e94560, #0f3460);
+    z-index: 30;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .header-bar {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    background: rgba(11,11,26,0.7);
+    backdrop-filter: blur(12px);
+    padding: 8px 24px;
+    border-radius: 30px;
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 12px;
+  }
+  .header-bar .project { color: rgba(255,255,255,0.4); font-weight: 300; }
+  .header-bar .project strong { color: rgba(255,255,255,0.7); font-weight: 600; }
+  .header-bar .divider { color: rgba(255,255,255,0.1); }
+  .header-bar .group { color: rgba(255,255,255,0.35); font-size: 11px; }
+
+  .slide-number {
+    position: fixed;
+    bottom: 90px;
+    right: 40px;
+    z-index: 15;
+    font-size: 72px;
+    font-weight: 900;
+    font-family: 'Playfair Display', serif;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+  }
+
+  @media (max-width: 900px) {
+    .content { grid-template-columns: 1fr; gap: 30px; }
+    .slide { padding: 30px 24px; justify-content: flex-start; padding-top: 100px; }
+    h2 { font-size: 28px; }
+    .image-side { aspect-ratio: 16/9; }
+    .header-bar { display: none; }
+    .nav { padding: 8px 14px; gap: 8px; }
+    .nav button { padding: 6px 12px; font-size: 12px; }
+    .slide-number { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="header-bar">
+  <span class="project">Prof. <strong>Fernando</strong> · História</span>
+  <span class="divider">|</span>
+  <span class="group">João Pedro · Luiz Felipe · Miguel Oliveira · Bernardo · João Marcelo</span>
+</div>
+
+<div class="slide-number" id="slideNumber">01</div>
+
+<!-- SLIDE 1 — João Pedro -->
+<div class="slide active" data-index="0">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1589519160732-57fc6ea83bc8?w=1600&h=900&fit=crop" alt="Mapa antigo">
+  </div>
+  <div class="slide-overlay"></div>
+  <div class="content">
+    <div class="text-side">
+      <div class="label">Contexto Histórico</div>
+      <h2>Panamá: a <span>província esquecida</span> da Grã-Colômbia</h2>
+      <p class="desc">Após libertar-se da Espanha em 1821, o Panamá uniu-se à Grã-Colômbia de Simón Bolívar. Mas Bogotá tratava o istmo como periferia. Enquanto isso, sua posição geográfica estratégica despertava cobiça mundial — franceses e americanos já sonhavam com um canal que ligasse os oceanos.</p>
+      <div class="speech-box">
+        <div class="speaker">
+          <div class="avatar">JP</div>
+          <span class="name">João Pedro</span>
+        </div>
+        <p>"O Panamá sempre foi mais uma rota do que um destino para Bogotá. Durante décadas, os panamenhos enviaram impostos para a capital colombiana sem receber investimento de volta — e a ideia de separação já circulava nos jornais locais desde 1850."</p>
+      </div>
+    </div>
+    <div class="image-side">
+      <img src="https://images.unsplash.com/photo-1589519160732-57fc6ea83bc8?w=800&h=600&fit=crop" alt="Mapa histórico do Panamá">
+      <div class="img-badge">Século XIX</div>
+      <div class="img-caption">Mapa do Istmo do Panamá — a estreita faixa de terra que conecta a América do Sul à Central</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — Luiz Felipe -->
+<div class="slide" data-index="1">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1614729939124-032f0c56f5f5?w=1600&h=900&fit=crop" alt="Guerra histórica">
+  </div>
+  <div class="slide-overlay slide-overlay-alt"></div>
+  <div class="content">
+    <div class="text-side">
+      <div class="label">Guerra dos Mil Dias</div>
+      <h2>O conflito que <span>devastou</span> o istmo</h2>
+      <p class="desc">Entre 1899 e 1902, liberais e conservadores colombianos travaram uma guerra civil brutal. O Panamá foi palco de batalhas sangrentas. Milhares morreram. A economia local colapsou. Para os panamenhos, ficou claro: enquanto fossem parte da Colômbia, pagariam por guerras que não escolheram.</p>
+      <div class="speech-box">
+        <div class="speaker">
+          <div class="avatar">LF</div>
+          <span class="name">Luiz Felipe</span>
+        </div>
+        <p>"A Guerra dos Mil Dias matou mais de 100 mil pessoas. O Panamá perdeu gerações inteiras. Esse sofrimento foi o combustível que acendeu de vez o desejo de independência — as pessoas passaram a odiar o governo central que as arrastava para o caos."</p>
+      </div>
+    </div>
+    <div class="image-side">
+      <img src="https://images.unsplash.com/photo-1614729939124-032f0c56f5f5?w=800&h=600&fit=crop" alt="Cena da Guerra dos Mil Dias">
+      <div class="img-badge">1899–1902</div>
+      <div class="img-caption">A Guerra dos Mil Dias foi a guerra civil mais letal da história da Colômbia</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3 — Miguel Oliveira -->
+<div class="slide" data-index="2">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1580651315530-69c8e0026377?w=1600&h=900&fit=crop" alt="Theodore Roosevelt e Canal">
+  </div>
+  <div class="slide-overlay"></div>
+  <div class="content">
+    <div class="text-side">
+      <div class="label">Interesse dos EUA</div>
+      <h2>Hay-Herrán: o tratado <span>rejeitado</span></h2>
+      <p class="desc">Os EUA negociaram com a Colômbia o Tratado Hay-Herrán para construir o Canal. O Senado colombiano recusou, exigindo mais dinheiro e soberania. Theodore Roosevelt, impaciente, chamou os colombianos de "chantagistas" e passou a tramar com os separatistas panamenhos.</p>
+      <div class="speech-box">
+        <div class="speaker">
+          <div class="avatar">MO</div>
+          <span class="name">Miguel Oliveira</span>
+        </div>
+        <p>"Roosevelt queria o canal a qualquer custo. Quando a Colômbia disse 'não', ele não desistiu — apenas mudou de parceiro. Os EUA armaram e financiaram a revolução panamenha. O canal era mais importante do que qualquer princípio de soberania."</p>
+      </div>
+    </div>
+    <div class="image-side">
+      <img src="https://images.unsplash.com/photo-1580651315530-69c8e0026377?w=800&h=600&fit=crop" alt="Theodore Roosevelt">
+      <div class="img-badge">Theodore Roosevelt</div>
+      <div class="img-caption">"Speak softly and carry a big stick" — a política do Big Stick aplicada ao Panamá</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 — Bernardo -->
+<div class="slide" data-index="3">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1526280760714-f9e8b26f318f?w=1600&h=900&fit=crop" alt="Bandeira do Panamá">
+  </div>
+  <div class="slide-overlay slide-overlay-alt"></div>
+  <div class="content">
+    <div class="text-side">
+      <div class="label">Independência</div>
+      <h2>3 de novembro de 1903: o <span>grito</span> de liberdade</h2>
+      <p class="desc">Com apoio militar americano — incluindo o USS Nashville ancorado no Caribe — o Panamá declarou sua independência sem um tiro. Tropas colombianas foram impedidas de chegar ao istmo. Em horas, nascia a República do Panamá. O preço? O controle do Canal para os EUA.</p>
+      <div class="speech-box">
+        <div class="speaker">
+          <div class="avatar">BR</div>
+          <span class="name">Bernardo</span>
+        </div>
+        <p>"Foi uma independência relâmpago — mas não foi gratuita. Os EUA garantiram a separação à força. Enquanto isso, no Panamá, Manuel Amador Guerrero se tornava o primeiro presidente de uma nação que mal tinha tempo de comemorar antes de assinar o tratado do Canal."</p>
+      </div>
+    </div>
+    <div class="image-side">
+      <img src="https://images.unsplash.com/photo-1526280760714-f9e8b26f318f?w=800&h=600&fit=crop" alt="Bandeira do Panamá hasteada">
+      <div class="img-badge">03/11/1903</div>
+      <div class="img-caption">A bandeira do Panamá foi hasteada pela primeira vez como nação independente</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5 — João Marcelo -->
+<div class="slide" data-index="4">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1599733589046-10c7f0f8a1e2?w=1600&h=900&fit=crop" alt="Canal do Panamá">
+  </div>
+  <div class="slide-overlay"></div>
+  <div class="content">
+    <div class="text-side">
+      <div class="label">Tratado e Canal</div>
+      <h2>Hay-Bunau-Varilla: o <span>preço</span> da soberania</h2>
+      <p class="desc">Apenas 15 dias após a independência, o Tratado Hay-Bunau-Varilla foi assinado. O Panamá cedeu aos EUA a Zona do Canal — uma faixa de 16 km de largura — em troca de US$ 10 milhões e um aluguel anual. O canal foi inaugurado em 1914, mudando para sempre o comércio global.</p>
+      <div class="speech-box">
+        <div class="speaker">
+          <div class="avatar">JM</div>
+          <span class="name">João Marcelo</span>
+        </div>
+        <p>"O tratado foi tão desvantajoso que nem panamenho assinou — foi negociado por um francês, Bunau-Varilla, que era representante dos acionistas do canal. O Panamá ganhou a independência, mas perdeu o controle do seu principal território por quase um século."</p>
+      </div>
+    </div>
+    <div class="image-side">
+      <img src="https://images.unsplash.com/photo-1599733589046-10c7f0f8a1e2?w=800&h=600&fit=crop" alt="Navios no Canal do Panamá">
+      <div class="img-badge">1914</div>
+      <div class="img-caption">O Canal do Panamá eliminou a necessidade de contornar o Cabo Horn — uma economia de 13.000 km</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 — Grupo -->
+<div class="slide" data-index="5">
+  <div class="slide-bg">
+    <img src="https://images.unsplash.com/photo-1564939558297-fc396f18e5c7?w=1600&h=900&fit=crop" alt="Cidade do Panamá moderna">
+  </div>
+  <div class="slide-overlay slide-overlay-alt"></div>
+  <div class="content">
+    <div class="text-side">
+      <div class="label">Conclusão</div>
+      <h2>Legado: <span>independência</span> ou troca de senhor?</h2>
+      <p class="desc">A independência de 1903 libertou o Panamá da Colômbia, mas o colocou sob a esfera dos EUA por décadas. O Canal só foi devolvido em 1999, após décadas de luta liderada por Omar Torrijos. A história do Panamá nos mostra que independência formal nem sempre significa soberania real.</p>
+      <div class="speech-box">
+        <div class="speaker">
+          <div class="avatar">G</div>
+          <span class="name">Grupo</span>
+        </div>
+        <p>"A independência do Panamá é um lembrete de que, em um mundo de grandes potências, países pequenos muitas vezes trocam um dominador por outro. A verdadeira soberania panamenha só foi conquistada em 1999, com a devolução do Canal — uma luta que durou 96 anos."</p>
+      </div>
+    </div>
+    <div class="image-side">
+      <img src="https://images.unsplash.com/photo-1564939558297-fc396f18e5c7?w=800&h=600&fit=crop" alt="Panamá cidade moderna">
+      <div class="img-badge">1999–Presente</div>
+      <div class="img-caption">Hoje o Panamá é um dos países mais prósperos da América Latina, dono do seu canal</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <button onclick="prevSlide()">&#8592; Anterior</button>
+  <div class="dots" id="dots"></div>
+  <button onclick="nextSlide()">Próximo &#8594;</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progressBar = document.getElementById('progressBar');
+  const slideNum = document.getElementById('slideNumber');
+
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    document.getElementById('dots').appendChild(dot);
+  }
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    document.querySelectorAll('.dot')[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    document.querySelectorAll('.dot')[current].classList.add('active');
+    progressBar.style.width = ((current + 1) / total * 100) + '%';
+    slideNum.textContent = String(current + 1).padStart(2, '0');
+  }
+
+  function nextSlide() { goTo((current + 1) % total); }
+  function prevSlide() { goTo((current - 1 + total) % total); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+
+  progressBar.style.width = ((1 / total) * 100) + '%';
+</script>
+</body>
+</html>
